@@ -9,7 +9,7 @@ define( function ( require ) {
 		theme : 'q-android',
 		version : '',
 		app_type : 'pwa',
-		app_title : 'WP-AppKit',
+		app_title : 'WP-AppKit PWA',
 		app_platform : 'android',
 		gmt_offset : 0,
 		debug_mode : 'off',

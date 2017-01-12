@@ -1,4 +1,4 @@
-var cacheName = 'wpak-app-3458-20170112-162600';
+var cacheName = 'wpak-app-3458-20170112-044605';
 var filesToCache = ['/',
 '/lang/theme-messages.js',
 '/core/region-manager.js',
