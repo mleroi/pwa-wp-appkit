@@ -4,8 +4,8 @@ define( function ( require ) {
 
 	return {
 		app_slug : 'test-progressive-web-app',
-		wp_ws_url : 'http://uncategorized-creations.com/wp-appkit-api/test-progressive-web-app',
-		wp_url : 'http://uncategorized-creations.com',
+		wp_ws_url : 'https://uncategorized-creations.com/wp-appkit-api/test-progressive-web-app',
+		wp_url : 'https://uncategorized-creations.com',
 		theme : 'q-android',
 		version : '',
 		app_type : 'pwa',
