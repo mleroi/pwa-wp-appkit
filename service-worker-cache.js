@@ -1,5 +1,6 @@
-var cacheName = 'wpak-app-3458-20170112-104318';
-var filesToCache = ['/lang/theme-messages.js',
+var cacheName = 'wpak-app-3458-20170112-011551';
+var filesToCache = ['/',
+'/lang/theme-messages.js',
 '/core/region-manager.js',
 '/core/img/wpak-lady-bug-dark.svg',
 '/core/img/wpak-lady-bug-light.svg',
