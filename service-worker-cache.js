@@ -84,6 +84,11 @@ var filesToCache = ['/',
 '/themes/q-android/fonts/PT-Serif-Regular.ttf',
 '/config.js'];
 
+filesToCache = filesToCache.map( function( item ) {
+	var subdir = location.pathname.replace( '/service-worker-cache.js', '' );
+	return subdir + item;
+} );
+
 self.addEventListener( 'install', function ( e ) {
 	console.log( '[WP-AppKit Service Worker] Install' );
 	e.waitUntil(
