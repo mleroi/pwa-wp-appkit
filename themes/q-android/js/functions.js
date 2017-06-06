@@ -27,7 +27,7 @@ define([
     'theme/js/jquery.fitvids'
     ], function($,App,Storage,TemplateTags,Config,Moment,Velocity) {
 
-    
+    App.setParam( 'use-html5-pushstate', false );
     
     /*
      * App's parameters
