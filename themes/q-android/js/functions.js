@@ -112,7 +112,7 @@ define([
         return template_args;
         
     } );
-
+    
     // @desc Catch if we're going to a single and coming from a single (it is the case when clicking on a post in the last posts widget at the bottom of a post)
     // Update properly the history stack
     App.filter( 'make-history', function( history_action, history_stack, queried_screen, current_screen, previous_screen ) {
@@ -229,7 +229,7 @@ define([
 
 
 	}
-
+    
     // @desc Default animation
     // Also used when the direction is unknown
 	transition_default = function ( $wrapper, $current, $next, current_screen, next_screen, $deferred ) {
@@ -280,6 +280,7 @@ define([
 		if ( result.ok ) {
 			showMessage("Content updated successfully");
 		}else{
+            console.log('error!',result);
 			showMessage(result.message);
 		}
 
@@ -299,6 +300,8 @@ define([
     // @param view
     App.on( 'screen:showed', function( current_screen, view ) {
 
+        var currentScreenObject = App.getCurrentScreenObject();
+        
         /*
          * 1. Off canvas menu
          */
@@ -347,11 +350,11 @@ define([
             $("#app-layout").on("click", ".single-content a", openInBrowser);
             
             // Make any necessary modification to post/page content
-            prepareContent();
+            prepareContent( currentScreenObject );
             
             // Display videos and make them responsive
             // We defer video loading to keep transitions smooth
-            loadAndFormatVideosFor( current_screen );
+            loadAndFormatVideosFor( currentScreenObject );
 
 		}
 
@@ -710,11 +713,15 @@ define([
      */
     
     // @desc Prepare content for proper display / Part of the work is done in /php/prepare-content.php
-	function prepareContent() {
+	function prepareContent( currentScreenObject ) {
 
         // Modify embedded tweets code for proper display
         // Note: it is not possible to style embedded tweet in apps as Twitter doesn't identify the referer
         $(".single-template blockquote.twitter-tweet p").css( "display", "inline-block" );
+        
+        // Set content for unavailable content notification
+        // Note: unavaible content is notified with [hide_from_apps notify="yes"] shortcode
+        $(".wpak-content-not-available").html('Content unavailable');
 	
     }
     
@@ -722,25 +729,39 @@ define([
     // Relies on the InAppBrowser Cordova Core Plugin / https://build.phonegap.com/plugins/233
     // Target _blank calls an in app browser (iOS behavior)
     // Target _system calls the default browser (Android behavior)
+    // Link begins with #, route to an internal screen
     // @param {object} e
     function openInBrowser(e) {
 
         e.preventDefault();
         
-        try {
-            cordova.InAppBrowser.open(e.target.href, '_system', 'location=yes');    
-        } catch(err) {
-            window.open(e.target.href, '_blank', 'location=yes');
+        // Get the href attribute value
+        // Using attr() rather than directly .href to get the not modified value of the href attribute
+        var href = $(e.target).attr('href');
+        
+        if ( href.charAt(0) !== '#' ) { // href doesn't begin with #
+            
+            try { // InAppBrowser Cordova plugin is available
+                cordova.InAppBrowser.open( href, '_system', 'location=yes' ); // Launch the default Android browser
+            } catch(err) { // InAppBrowser Cordova plugin is NOT available
+                window.open( href, '_blank', 'location=yes' ); // Open a new browser window
+            }
+            
+        } else { // href begins with # (ie. it's an internal link)
+            
+            App.navigate( href ); // Navigate to the corresponding screen
+            
         }
+        
 
     }
 
     // @desc Load videos / launched after transitions to keep them smooth
     // data-src are filled and src emptied in /php/prepare-content.php
     // We use the fitVids library to make videos responsive (https://github.com/davatron5000/FitVids.js)
-    function loadAndFormatVideosFor( current_screen ) { // @todo currently bugging with pages
+    function loadAndFormatVideosFor( currentScreenObject ) { // @todo currently bugging with pages
 
-        if ( current_screen.screen_type === 'single' ) {
+        if ( currentScreenObject.screen_type === 'single' ) {
         
             var currentContainerId = getIdFor($currentContainer);
 
@@ -753,7 +774,7 @@ define([
             $('#' + currentContainerId + ' ' + '#single-content').fitVids();
         }
         
-        if ( current_screen.screen_type === 'page' ) {
+        if ( currentScreenObject.screen_type === 'page' ) {
 
             $("iframe").each(function(index) {
                 if ($(this).attr('data-src')) {

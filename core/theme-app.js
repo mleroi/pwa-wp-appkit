@@ -38,7 +38,7 @@ define( function( require, exports ) {
 	};
 
 	/**
-	 * Aggregate App and RegionManager events
+	 * Aggregate ThemeApp and RegionManager events
 	 */
 	themeApp.on = function( event, callback ) {
 		if ( _.contains( [ 'screen:leave',
@@ -50,6 +50,9 @@ define( function( require, exports ) {
 						event ) ) {
 			//Proxy RegionManager events :
 			RegionManager.on( event, callback );
+		} else if ( _.contains( [ 'refresh:start', 'refresh:end' ],	event ) ) {
+			//Proxy App events :
+			App.on( event, callback );
 		} else {
 			vent.on( event, callback );
 		}
@@ -236,10 +239,9 @@ define( function( require, exports ) {
 	themeApp.refresh = function( cb_ok, cb_error ) {
 
 		refreshing++;
-		vent.trigger( 'refresh:start' );
 
 		App.sync(
-			function() {
+			function( deferred ) {
 				RegionManager.buildMenu(
 					function() {
 						App.resetDefaultRoute();
@@ -258,7 +260,10 @@ define( function( require, exports ) {
 						Backbone.history.start({silent:false});
 
 						refreshing--;
-						vent.trigger( 'refresh:end', format_result_data(true) );
+                        
+                        if ( deferred ) {
+                            deferred.resolve( format_result_data( true ) ); //Triggers refresh:end
+                        }
 
 						if ( cb_ok ) {
 							cb_ok();
@@ -267,7 +272,7 @@ define( function( require, exports ) {
 					true
 				);
 			},
-			function( error ) {
+			function( error, deferred ) {
 				refreshing--;
 
 				var formated_error = format_theme_event_data( error.event, error );
@@ -278,7 +283,9 @@ define( function( require, exports ) {
 
 				var result = format_result_data(false,formated_error.message,formated_error);
 
-				vent.trigger( 'refresh:end', result );
+                if ( deferred ) {
+                    deferred.reject( result ); //Triggers refresh:end
+                }
 			},
 			true
 		);
@@ -728,7 +735,7 @@ define( function( require, exports ) {
 			} else if ( current_screen.screen_type == 'comments' ) {
 				transition = 'previous-screen';
 			} else {
-				transition = 'default';
+				transition = 'next-screen';
 			}
 		} else if ( next_screen.screen_type == 'comments' ) {
 			transition = 'next-screen';
@@ -999,6 +1006,16 @@ define( function( require, exports ) {
 
         return screen_object;
     };
+	
+	/**
+	 * Re-render Menu view
+	 */
+	themeApp.renderMenu = function() {
+		var menu_view = RegionManager.getMenuView();
+		if ( menu_view ) {
+			menu_view.render();
+		}
+	};
 
 	//Use exports so that theme-tpl-tags and theme-app (which depend on each other, creating
 	//a circular dependency for requirejs) can both be required at the same time
