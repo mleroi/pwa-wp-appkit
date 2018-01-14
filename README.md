@@ -1,5 +1,5 @@
 # pwa-wp-appkit
-Progressive Web App made with [WP-AppKit's PWA export](https://github.com/mleroi/wp-app-kit/tree/feature-pwa).
+Progressive Web App made with [WP-AppKit's PWA export](https://github.com/uncatcrea/wp-appkit/tree/development-pwa).
 
 Those are the sources of the PWA that runs here: [https://mleroi.github.io/pwa-wp-appkit/](https://mleroi.github.io/pwa-wp-appkit/). 
 
