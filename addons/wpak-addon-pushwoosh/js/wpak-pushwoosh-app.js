@@ -1,0 +1,1 @@
+;define(['addons/wpak-addon-pushwoosh/js/wpak-pushwoosh'],function(o){o.init()});

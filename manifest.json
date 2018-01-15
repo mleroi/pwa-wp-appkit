@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Test PWA",
+    "short_name": "Test PWA",
     "description": "",
     "icons": [
         {
@@ -15,5 +15,7 @@
         }
     ],
     "start_url": "./",
-    "display": "standalone"
+    "display": "standalone",
+    "background_color": "#68702f",
+    "theme_color": "#122e4f"
 }
