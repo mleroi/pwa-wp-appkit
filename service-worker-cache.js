@@ -1,4 +1,4 @@
-var cacheName = 'wpak-app-4-20180114-030021';
+var cacheName = 'wpak-app-4-20180115-090857';
 var filesToCache = ['/',
 '/debug.html',
 '/vendor/require.js',
